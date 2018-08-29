@@ -1,0 +1,16 @@
+body{
+    font: 15px/1.5 Arial, Helvetica, sans-serif;
+    padding:0;
+    margin:0;
+    background-color:#4e88e5;
+}
+
+ .container{
+     width:80%;
+     margin:auto;
+     overflow:hidden;
+ }
+ 
+ header{
+     background:#4e88e5;
+ }
