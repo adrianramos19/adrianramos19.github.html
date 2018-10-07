@@ -117,6 +117,7 @@ body{
  
  #boxes{
      margin-top:20px;
+     float:center;
  }
  
  #boxes .box{
@@ -128,6 +129,7 @@ body{
  
  #boxes .box{
      width:340px;
+     
      
  }
  
@@ -200,5 +202,8 @@ body{
   height:200px;
   width: 200px;
   
+ }
+ 
+ 
  }
  }
