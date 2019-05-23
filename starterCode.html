@@ -8,43 +8,54 @@
 
 
 <script type="text/processing">
+/** This is a tutorial for making a bouncing ball
+ * Author: Adrian Ramos
+ * Version: 1.0
+ */
+
+/** This function sets up the screen for the ball
+*/
+int x; int y; int r; int Vx; int Vy;
 void setup(){
-size(800,1200);
-background(0);
+  size(600,700);
+  x=100;
+  y=200;
+  r=30;
+  Vx=5;
+  Vy=3;
 }
-int x = 0;
-int speed = 2;
-int value = 0;
-int acc = 0;
-int s = 0;
-int fc = 0;
-
-void mousePressed(){
-if (mouseX > 140 && mouseX < 640 && mouseY > 55 && mouseY < 115){
-background(0);
-s = 0;
-}
-
-}
-
+/** This function draws the ball
+*/
 void draw(){
-stroke(4);
-fill(90);
-if (mouseX > 140 && mouseX < 640 && mouseY > 55 && mouseY < 115){
-fill(255,55,0);
+  background(0);   //starts each loop with a fresh slate
+  ellipse(x,y,r,r);
+  updatePosition();
+  bounce();
+  
+} 
+/** This function allows the ball to move to different positions
+*/
+void updatePosition(){
+  x += Vx;
+  y += Vy;
+  
 }
-rect(140, 55, 500, 60, 20);
-fill(255);
-textSize(40);
-text("Click this button to reset", 150, 100); 
-fill(random(200),random(255),random(255));
-stroke(4);
-ellipse(mouseX, mouseY, s, s); 
-if (acc %15 == 0 && s < 300){
-s ++;
-}
-acc ++;
-
+/** This function allows the ball to bounce off of the edges of the screen
+*/
+void bounce(){
+  if(x > width - r/2){
+    Vx *= -1;
+  }
+  if(y > height - r/2){
+    Vy *= -1;    
+  }
+  if(x < r/2 ){
+    Vx *= -1;
+  }
+  if(y < r/2){
+    Vy *= -1;
+  }
+  
 }
 
 </script>
