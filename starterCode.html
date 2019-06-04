@@ -8,55 +8,82 @@
 
 
 <script type="text/processing">
-/** This is a tutorial for making a bouncing ball
- * Author: Adrian Ramos
- * Version: 1.0
+/* This is my unique version of Flappy Bird!
+ * Instead of a bird, you'll be playing as Pikachu!
+ * Avoid explosions and go as far as you can!
  */
 
-/** This function sets up the screen for the ball
-*/
-int x; int y; int r; int Vx; int Vy;
+//loads the images necessary for the game
+PImage background;
+PImage pikachu;
+PImage explosion;
+int x;
+int cx;
+int cy;
+int cVy;
+int gameState;
+int[] wx = new int[2]; //Explosion Arrays
+int[] wy = new int[2];
+
+//this function sets up the game
 void setup(){
-  size(600,700);
-  x=100;
-  y=200;
-  r=30;
-  Vx=5;
-  Vy=3;
+  gameState = 0;
+  size(600,600);
+  background = loadImage("./img/flappyBack2.png");
+  pikachu = loadImage("./img/Pikachu_SSB4.png");
+  explosion = loadImage("./img/explosion.png");
+  cVy = 2;
+  cx = 50;
+  
 }
-/** This function draws the ball
-*/
+// this function draws the background, allowing it to continously move
 void draw(){
-  background(0);   //starts each loop with a fresh slate
-  ellipse(x,y,r,r);
-  updatePosition();
-  bounce();
-  
-} 
-/** This function allows the ball to move to different positions
-*/
-void updatePosition(){
-  x += Vx;
-  y += Vy;
-  
+  if(gameState == 0){
+    image(background, x, 0);
+    image(background, x, 0);
+    image(background, x+background.width-5, 0);
+    x--;
+  }
+ if(gameState == 1){
+  fill(255); //COLOR OF TEXT
+textSize(40); //SIZE OF TEXT
+if(mouseX < 330 && mouseX > 100 && mouseY < 245 && mouseY > 200){
+fill(0,0,255);
 }
-/** This function allows the ball to bounce off of the edges of the screen
-*/
-void bounce(){
-  if(x > width - r/2){
-    Vx *= -1;
-  }
-  if(y > height - r/2){
-    Vy *= -1;    
-  }
-  if(x < r/2 ){
-    Vx *= -1;
-  }
-  if(y < r/2){
-    Vy *= -1;
-  }
-  
+rect(100,200, 230, 45, 10); //BACKGROUND OF BUTTON
+fill(0);
+if(mouseX < 330 && mouseX > 100 && mouseY < 245 && mouseY > 200){
+fill(255,0,0);
 }
+
+
+text("You Lose!!!", 110,239); //TEXT ON BUTTON
+//END BUTTON
+ }
+
+  if(x < -background.width){
+      x=0;
+    }
+    image(pikachu, cx, cy);
+    cy = cy + cVy;
+    cVy++;
+    x--;
+    accelerate();
+    checkPika();
+}
+// this function allows Pikachu to accelerate and bounce 
+void accelerate(){
+  if(mousePressed){
+    cVy = -11;
+  }
+}
+// this function check to make sure that Pikachu isn't out of the game area
+void checkPika(){
+  if(cy > height || cy < -80){
+    gameState = 1;
+  }
+}
+
 
 </script>
 
