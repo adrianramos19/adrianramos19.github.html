@@ -14,63 +14,285 @@
  */
 
 //loads the images necessary for the game
-PImage background;
+PImage bg;
+PImage bgR;
+PImage openingBg;
 PImage pikachu;
 PImage explosion;
+PImage pokeball; int px; int py;
+PImage weapon; int wx; int wy;
+PFont font1;
+PFont font2;
+PFont bold;
 int x;
+int y;
 int cx;
 int cy;
 int cVy;
 int gameState;
-int[] wx = new int[2]; //Explosion Arrays
-int[] wy = new int[2];
+int numExplosion = 7;
+int[] mx = new int[numExplosion]; //Explosion Arrays
+int[] my = new int[numExplosion];
+int count;
+int score;
+int highScore;
+int weaponCount;
+int pokeballCount;
+boolean isFiring;
+boolean poke;
 
 //this function sets up the game
 void setup(){
-  gameState = 0;
+  isFiring = true;
+  poke = false
+  gameState = -1;
+  font2 = createFont("OCR A EXTENDED",18);
+  font1 = createFont("Courier New",38);
+  bold = createFont("OCR A EXTENDED",25);
+  
+  
+  
   size(600,600);
-  background = loadImage("./img/flappyBack2.png");
+  bg = loadImage("./img/flappyBack2.png");
+  bgR = loadImage("./img/flappyBack2.png");
+  openingBg = loadImage("./img/opening.png");
   pikachu = loadImage("./img/Pikachu_SSB4.png");
   explosion = loadImage("./img/explosion.png");
+  pokeball = loadImage("./img/ball.png");
+  weapon = loadImage("./img/bolt.png");
   cVy = 2;
   cx = 50;
+  cy = 100;
+  
+  wx = width + 10000;
+  px = width + 200;
+  py = (int)random(200,600);
+  for(int i = 0; i < numExplosion, i++){
+    mx[i] = width + (int)random(50,200) + 200*i;
+    my[i] = height/2 + (int)random(-200,200);
+  }
   
 }
 // this function draws the background, allowing it to continously move
 void draw(){
-  if(gameState == 0){
-    image(background, x, 0);
-    image(background, x, 0);
-    image(background, x+background.width-5, 0);
-    x--;
+  count++;
+  move();
+  if(score > highScore){
+    highScore = score;
   }
- if(gameState == 1){
-  fill(255); //COLOR OF TEXT
-textSize(40); //SIZE OF TEXT
-if(mouseX < 330 && mouseX > 100 && mouseY < 245 && mouseY > 200){
-fill(0,0,255);
-}
-rect(100,200, 230, 45, 10); //BACKGROUND OF BUTTON
-fill(0);
-if(mouseX < 330 && mouseX > 100 && mouseY < 245 && mouseY > 200){
-fill(255,0,0);
-}
+  if(gameState == 0){
+    image(bg, x, 0);
+    image(bgR, x + bg.width-6,0);
+    image(bg, x + 2 * bg.width-12,0);
+  }
 
-
-text("You Lose!!!", 110,239); //TEXT ON BUTTON
-//END BUTTON
- }
-
-  if(x < -background.width){
+  if(x < -(2*bg.width + 12)){
       x=0;
     }
-    image(pikachu, cx, cy);
-    cy = cy + cVy;
-    cVy++;
-    x--;
-    accelerate();
-    checkPika();
+    
 }
+//Explosions
+for(int i=0; i < numExplosion; i++){
+  mx[i] -=2;
+  if(mx[i] < -10){
+    score++;
+    mx[i] = width + (int)random(50,200);
+    my[i] = height/2 + (int)random(-200,200);
+  }
+  
+  if(abs((int)((wx+10)-(mx[i]+5))) < 10 &&
+  abs((int)((wy+10)-(my[i]+32))) < 56){
+    mx[i] += 2000;
+    wx = width + 20000;
+    score++;
+  }
+  
+  if(abs((int)((cx+35)-(mx[i]+7))) < 22 &&
+  abs((int)((cy+34)-(my[i]+4))) < 74){
+    gameState = 1;
+  }
+  
+  image(explosion, mx[i], my[i]);
+}
+
+//Pokeball
+if(score > 10){
+  px -=3;
+}
+
+if(px < -100){
+  px = width + 2000;
+  py = (int)random(200,600);
+}
+
+if(abs((int)((cx+35)-(px+75))) < 80 &&
+abs((int)((cy+34)-(py+52))) < 86){
+  gameState = 1;
+}
+ image(pokeball, px, py)
+ 
+//Pikachu
+image(pikachu,cx,cy);
+cy = cy + cVy;
+if(count%2 == 0){
+  cVy++;
+}
+x--;
+checkPika();
+
+//Weapon
+image(weapon, wx, wy);
+wx += 10;
+if(abs((int)((wx+10)-(px+75))) < 80 &&
+abs((int)((wy+10)-(py+52))) < 86){
+  px +=2000;
+  wx = 20000;
+
+if(pokeballCount == 0){
+  poke = true;
+}
+
+if(pokeballCount > 0){
+  poke = false
+}
+ pokeballCount++;
+
+if(wx > width +20){
+  wx = 20000;
+}
+}
+
+//player dies
+if(gameState ==1){
+  //button
+  textSize(34);
+  text("You died!", 200,230);
+  fill(245); //text color
+  rect(190,235,240,45,10); //button background
+  fill(0);
+}
+
+//Restart game
+if(mouseX > 190 && mouseY > 235 && mouseX < 430 && mouseY < 280){
+  if(mousePressed){
+    cy = 100;
+    cVy = 2;
+    cx = 50;
+    score = 0;
+    wx = width + 10000;
+    px = width + 200;
+    py = (int)random(200,600);
+    for(int i=0; i < numExplosion; i++){
+      mx[i] = width + (int)random(50,200) + 200*i;
+      my[i] = height/2 + (int)random(-200,200);
+    }
+    gameState = 0;
+  }
+
+//Hovering Over Button
+else{
+  fill(173,191,255);
+  rect(190,235,240,45,10);
+  fill(0);
+  text("Play Again?",200,270); //button text
+ }
+}
+
+else{
+  text("Click Me!",200,270); //button text
+}
+} 
+
+//Scores and Warnings
+fill(0);
+textSize(15);
+text("Score: " + score, width - 130,30);
+text("High score: " + highScore, width - 130,50);
+if(score > 8 && score < 12){
+  fill(255,0,0);
+  textSize(20);
+  text("Pokeballs Ahead!",30,110);
+  fill(0);
+  textSize(20);
+}
+
+if(weaponCount < 1 && score > 0){
+  if(score < 5){
+    text("Pikachu can throw lightning bolts!",20,30);
+  }
+  else{
+    text("Press the down arrow to throw!",20,30);
+  }
+}
+
+if(isFiring && weaponCount > 0 && score > 3){
+  text("Awesome! You know how to throw!",20,30);
+  if(weaponCount > 3){
+    text("Hint! There are more obstacles!",20,60);
+  }
+}
+
+if(poke){
+  text("Pikachu can destroy pokeballs!",20,60);
+}
+
+// Opening Background
+if(gameState == -1){
+  image(openingBg,0,0);
+  fill(0,0,0,151);
+  textSize(24);
+  textFont(font1);
+  text("Click anywhere to play!", 45,150);
+  if(mousePressed && mouseX > 0){
+    gameState = 0;
+  }
+  
+  textFont(font2);
+  text("Move: Left/Right Arrows", 170,270);
+  text("To Throw Weapon: Down Arrow", 170,295);
+  text("Fly: Click Mouse",170,320);
+  fill(0,0,0,255);
+  textFont(bold);
+  text("Pikachu Controls",200,240);
+  noFill();
+  rect(160,250,280,80,5);
+}
+
+//Moving Left and Right
+void move(){
+  if(keyPressed){
+    if(cx > 0 && keyCode == LEFT){
+      cx -=2;
+    }
+    else if(cx < width/2 && keyCode == RIGHT){
+      cx += 2;
+    }
+    
+  }
+}
+
+//Throwing Lightning Bolts button
+void keyReleased(){
+  if(keyCode == DOWN){
+    pikaThrow();
+  }
+}
+
+//Throwing Lightning Bolts Code
+void pikaThrow();
+wx = cx + 20;
+wy = cy + 45;
+weaponCount++;
+
+if(weaponCount > 4){
+  isFiring = true;
+}
+
+else{
+  isFiring = false;
+}
+
+
 // this function allows Pikachu to accelerate and bounce 
 void accelerate(){
   if(mousePressed){
